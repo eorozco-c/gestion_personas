@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% load static %}
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous">
+    </script>
+    <script src="https://kit.fontawesome.com/375104de3a.js" crossorigin="anonymous"></script>
+    <!-- Fin CDN -->
+    <!-- Icono Navegador -->
+    <link rel="shortcut icon" href="{%  static 'master/img/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{%  static 'master/img/favicon.ico' %}" type="image/x-icon">
+    <!-- Fin Icono Navegador -->
+    <link rel="stylesheet" href="{% static 'master/css/style.css' %}">
+    <link rel="stylesheet" href="{% block styles %}{% endblock styles %}">
+
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-custom">
+        <div class="container-fluid ms-3 me-3">
+            <a class="navbar-brand" href="{% url 'master:index' %}">
+                <img src="{% static 'master/img/logo.png' %}" alt="" width="150" height="80">
+            </a>
+            {% if "id" in request.session %}
+            <div>
+                <a class="d-inline-block nav-item nav-link color-text-custom fw-bold"
+                    href="{% url 'usuarios:profile' %}">Bienvenido
+                    {{usuario.nombre}}</a>
+                <a class="d-inline-block nav-item nav-link color-text-custom fw-bold"
+                    href="{% url 'usuarios:logout' %}">Desconectar</a>
+            </div>
+            {% else %}
+            <a class="nav-link color-text-custom fw-bold" href="{% url 'master:index' %}">Sign in</a>
+            {% endif %}
+        </div>
+    </nav>
+    {% block navbar %}{% endblock navbar %}
+
+    <header></header>
+    <main class="container-md mt-3">
+        {% block content %} {% endblock content%}
+    </main>
+    <footer></footer>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    {% block javascript %}{% endblock javascript%}
+</body>
+
+</html>

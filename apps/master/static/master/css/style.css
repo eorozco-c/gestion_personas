@@ -1,0 +1,18 @@
+.bg-custom {
+  background-color: #67092d;
+}
+.border-custom {
+  border-color: #67092d !important;
+}
+.color-text-custom {
+  color: #daf7a6;
+}
+.color-text-custom:hover {
+  color: yellow;
+}
+.btn-custom {
+  background-color: #ff5733;
+}
+.btn-custom:hover {
+  background-color: #b3391d;
+}

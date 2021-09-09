@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Trabajadores{% endblock title %}
+{% block navbar %}
+<ul class="nav nav-pills nav-fill bg-custom">
+    <li class="nav-item ">
+        <a class="nav-link bg-danger color-text-custom border border-danger" aria-current="page"
+            href="{% url 'trabajadores:index' %}">Trabajadores</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link color-text-custom border border-danger" href="{% url 'beneficios:index' %}">Beneficios</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link color-text-custom border border-danger"
+            href="{% url 'estadisticas:index' %}">Estadisticas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link color-text-custom border border-danger" href="{% url 'master:index' %}">Configuraciones</a>
+    </li>
+</ul>
+{% endblock navbar %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <h1>Trabajadores:</h1>
+    <a href="{% url 'master:index' %}" class="ms-2 btn btn-custom text-light border border-custom">Volver al menu</a>
+</div>
+<div>
+    <a href="{% url 'master:index' %}" class="btn btn-custom mt-3 text-light border border-custom">Nuevo Trabajador</a>
+    <a href="{% url 'master:index' %}" class="btn btn-custom mt-3 text-light border border-custom">Cargar lista</a>
+    <a href="{% url 'master:index' %}" class="btn btn-custom mt-3 text-light border border-custom">Descargar lista</a>
+</div>
+<table id="table" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true"
+    data-show-fullscreen="true" data-show-columns="true" data-show-columns-toggle-all="true" data-detail-view="true"
+    data-show-export="true" data-click-to-select="true" data-detail-formatter="detailFormatter"
+    data-minimum-count-columns="2" data-show-pagination-switch="true" data-pagination="true" data-id-field="id"
+    data-page-list="[10, 25, 50, 100, all]" data-show-footer="true" data-side-pagination="server"
+    data-url="https://examples.wenzhixin.net.cn/examples/bootstrap_table/data" data-response-handler="responseHandler">
+</table>
+{% endblock content %}

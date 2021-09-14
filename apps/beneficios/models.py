@@ -9,6 +9,13 @@ class  TipoBeneficio(models.Model):
 
     def __str__ (self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+        for field_name in ['nombre']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(TipoBeneficio, self).save(*args, **kwargs)
 
 class Beneficio(models.Model):
     nombre = models.CharField(max_length=50)
@@ -19,7 +26,20 @@ class Beneficio(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        for field_name in ['nombre']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(Beneficio, self).save(*args, **kwargs)
+
 class ElementoBeneficio(models.Model):
     nombre = models.CharField(max_length=50)
     beneficio = models.ForeignKey(Beneficio, related_name="beneficios_elemento", on_delete=models.CASCADE)
 
+    def save(self, *args, **kwargs):
+        for field_name in ['nombre']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(ElementoBeneficio, self).save(*args, **kwargs)

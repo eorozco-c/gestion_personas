@@ -6,5 +6,6 @@ app_name = "usuarios"
 urlpatterns = [
     path('', views.index, name="index"),
     path('register', views.Register.as_view(), name="register"),
-    path('profile', views.profile, name="profile"),
+    path('profile/<int:pk>', views.Profile.as_view(), name="profile"),
+    # path('profile', views.profile, name="profile"),
 ]

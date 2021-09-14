@@ -150,13 +150,16 @@ class FormularioActualizarPass(forms.ModelForm):
         }
 
     def clean(self):
-        user_pass = self.instance
-        actualPassword = self.cleaned_data["actualPassword"]
-        password = self.cleaned_data["password"]
-        confirm = self.cleaned_data["confirmarPassword"]
-        if not user_pass.check_password(actualPassword):
-            raise ValidationError({"actualPassword" :"contraseña invalida"})
-        if len(password) < 8 or len(password) > 50:
-            raise ValidationError({"password" : f"password debe tener entre 8 y 50 caracteres."})
-        if password != confirm:
-            raise ValidationError({"password" : "Las contraseñas no coinciden."})
+        usuario = self.instance
+        if usuario:
+            actualPassword = self.cleaned_data["actualPassword"]
+            password = self.cleaned_data["password"]
+            confirm = self.cleaned_data["confirmarPassword"]
+            if not usuario.check_password(actualPassword):
+                raise ValidationError({"actualPassword" :"contraseña invalida"})
+            if len(password) < 8 or len(password) > 50:
+                raise ValidationError({"password" : f"password debe tener entre 8 y 50 caracteres."})
+            if password != confirm:
+                raise ValidationError({"password" : "Las contraseñas no coinciden."})
+        else:
+            raise ValidationError({"password" : "Usuario no existe."})

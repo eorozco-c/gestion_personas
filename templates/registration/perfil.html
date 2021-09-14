@@ -21,7 +21,7 @@
             <form method="POST" class="border border-custom p-3 rounded-3">
                 <h3 class="text-center">Editar Perfil</h3>
                 {% csrf_token %}
-                {{formulario_reg|crispy}}
+                {{form|crispy}}
                 <div class="d-grid gap-2 col-2 mx-auto">
                     <input type="submit" class="btn btn-custom mt-3 text-light border border-custom" name="editProfile"
                         value="Editar">

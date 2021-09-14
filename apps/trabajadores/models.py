@@ -13,6 +13,13 @@ class Sector(models.Model):
     def __str__ (self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        for field_name in ['nombre', 'direccion']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(Sector, self).save(*args, **kwargs)
+
 class Trabajador(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
@@ -26,6 +33,12 @@ class Trabajador(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        for field_name in ['nombre', 'apellido']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(Trabajador, self).save(*args, **kwargs)
 
 class TrabajadorBeneficio(models.Model):
     trabajador = models.ForeignKey(Trabajador, related_name="beneficio_trabajador", on_delete=models.CASCADE)

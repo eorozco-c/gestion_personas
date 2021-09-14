@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'apps.master',
     'apps.trabajadores',
     'apps.usuarios',
+    'apps.configuraciones',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -136,6 +137,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
 #template Bootstrap 4
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+LOGIN_URL = "master:menu"
 AUTH_USER_MODEL = "usuarios.Usuario"
 LOGIN_REDIRECT_URL = "master:menu"
 LOGOUT_REDIRECT_URL = "master:index"

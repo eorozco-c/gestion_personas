@@ -20,3 +20,9 @@ class Usuario(AbstractUser):
     empresa = models.ForeignKey(Empresa, related_name="usuario_empresa", on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        for field_name in ['first_name','last_name']:
+            val = getattr(self, field_name, False)
+            if val:
+                setattr(self, field_name, val.capitalize())
+        super(Usuario, self).save(*args, **kwargs)

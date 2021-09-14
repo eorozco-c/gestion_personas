@@ -1,5 +1,10 @@
 .bg-custom {
-  background-color: #67092d;
+  background: linear-gradient(
+    27deg,
+    rgba(149, 17, 49, 1) 0%,
+    rgba(103, 9, 32, 1) 15%,
+    rgba(17, 0, 4, 1) 100%
+  );
 }
 .border-custom {
   border-color: #67092d !important;

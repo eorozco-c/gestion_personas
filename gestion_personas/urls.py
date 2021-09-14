@@ -26,4 +26,5 @@ urlpatterns = [
     path('estadisticas/',include('apps.estadisticas.urls')),
     path('trabajadores/',include('apps.trabajadores.urls')),
     path('usuarios/',include('apps.usuarios.urls')),
+    path('configuraciones/',include('apps.configuraciones.urls')),
 ]

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Beneficios{% endblock title %}
+{% block content %}
+<div class="d-flex justify-content-end">
+    <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
+            class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
+</div>
+<div class="mb-3 mt-3 container col-12">
+    <div class="row">
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="mb-3 border border-custom p-3 rounded-3">
+                <h2>Beneficio</h2>
+                <p>Nombre: {{object.nombre}}</p>
+                <p>Tipo {{object.tipo_beneficio}}</p>
+                <p>Fecha de inicio: {{object.fecha_inicio}}</p>
+                <p>Fecha fin: {{object.fecha_fin}}</p>
+                <hr>
+                <h2>Documentos</h2>
+            </div>
+        </div>
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="mb-3 border border-custom p-3 rounded-3">
+                <h2>Usuarios</h2>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

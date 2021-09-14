@@ -27,30 +27,34 @@
 <body>
     <nav class="navbar navbar-dark bg-custom">
         <div class="container-fluid ms-3 me-3">
-            <a class="navbar-brand" href="{% url 'master:index' %}">
+            <a class="navbar-brand" href="{% url 'master:menu' %}">
                 <img src="{% static 'master/img/logo.png' %}" alt="" width="150" height="80">
             </a>
-            {% if "id" in request.session %}
+            {% if user.is_authenticated %}
             <div>
                 <a class="d-inline-block nav-item nav-link color-text-custom fw-bold"
                     href="{% url 'usuarios:profile' %}">Bienvenido
-                    {{usuario.nombre}}</a>
+                    {{user.first_name}}</a>
                 <a class="d-inline-block nav-item nav-link color-text-custom fw-bold"
-                    href="{% url 'usuarios:logout' %}">Desconectar</a>
+                    href="{% url 'logout' %}">Desconectar</a>
             </div>
             {% else %}
-            <a class="nav-link color-text-custom fw-bold" href="{% url 'master:index' %}">Sign in</a>
+            <a class="nav-link color-text-custom fw-bold" href="{% url 'login' %}">Sign in</a>
             {% endif %}
         </div>
     </nav>
-    {% block navbar %}{% endblock navbar %}
+    {% block navbar %}
+    {% include 'navbar.html' %}
+    {% endblock navbar %}
 
     <header></header>
     <main class="container-md mt-3">
         {% block content %} {% endblock content%}
     </main>
     <footer></footer>
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
     {% block javascript %}{% endblock javascript%}
 </body>
 

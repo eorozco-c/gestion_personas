@@ -1,7 +1,6 @@
-from django.forms.models import model_to_dict
 from django import forms
 from .models import Empresa
-from ..validaciones import obtenerUsuario, validarLongitud
+from ..validaciones import validarLongitud
 class FormularioEmpresa(forms.ModelForm):
 
     class Meta:

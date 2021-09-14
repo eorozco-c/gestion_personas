@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Trabajadores{% endblock title %}
+{% block content %}
+<div class="d-flex justify-content-end">
+    <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
+            class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
+</div>
+<div class="mb-3 mt-3 container col-12">
+    <div class="row">
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="mb-3 border border-custom p-3 rounded-3">
+                <h2>{{object.nombre}} {{object.apellido}}</h2>
+                <p>Correo: {{object.correo}}</p>
+                <p>Rut {{object.rut}}</p>
+                <p>Fecha de nacimiento: {{object.fecha_nacimiento}}</p>
+                {% if object.genero == 1 %}
+                <p>Genero: Mujer</p>
+                {% elif object.genero == 2 %}
+                <p>Genero: Hombre</p>
+                {% elif object.genero == 3 %}
+                <p>Genero: Otro</p>
+                {% endif %}
+                <p>Sector: {{object.sector}}</p>
+                <hr>
+                <h2>Documentos</h2>
+            </div>
+        </div>
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="mb-3 border border-custom p-3 rounded-3">
+                <h2>Beneficios</h2>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

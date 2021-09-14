@@ -1,7 +1,8 @@
-from ..validaciones import obtenerUsuario
-from django.shortcuts import render,HttpResponse,redirect
-from ..usuarios.models import Perfil
-from .formularios import FormularioForgotPassowrd
+from django.shortcuts import render,redirect
+from apps.usuarios.models import Perfil
+from apps.trabajadores.models import Trabajador
+from apps.beneficios.models import Beneficio
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -10,34 +11,10 @@ def index(request):
         Perfil.objects.create(nombre="admin")
     return redirect("usuarios:index")
 
+@login_required(login_url='/')
 def menu(request):
-    if "id" in request.session:
-        usuario = obtenerUsuario(id = request.session["id"])
-        context = {
-            "usuario" : usuario,
-        }
-        return render(request, "menu.html", context)
-    return redirect("master:index")
-
-def forgotPassword(request):
-    if request.method == "GET":
-        form = FormularioForgotPassowrd()
-        if "id" in request.session:
-             return redirect("master:index")
-        context = {
-            "formulario" : form,
-            "title" : "Forgot Password",
-            "legend" : "Olvidor su contraseña?",
-        }
-        return render(request,"generico.html",context)
-    form = FormularioForgotPassowrd(request.POST)
-    if form.is_valid():
-        print("ENVIANDO CORREO")
-        return redirect("master:index")
-    else:
-        context = {
-            "formulario" : form,
-            "title" : "Forgot Password",
-            "legend" : "Olvido su contraseña?",
-        }
-        return render(request,"generico.html",context)
+    context = {
+        "trabajadores" : Trabajador.objects.count(),
+        "beneficios" : Beneficio.objects.count(),
+    }
+    return render(request, "menu.html", context)

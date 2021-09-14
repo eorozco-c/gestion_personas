@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="d-flex justify-content-end">
+    <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
+            class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
+</div>
+{% endif %}
+<form method="POST" class="mb-3 border border-custom p-3 rounded-3">
+    <h2 class="text-center">{{legend}}</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible" role="alert">{{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% csrf_token %}
+    {{form|crispy}}
+    <div class="d-grid gap-2 col-2 mx-auto">
+        <button type="submit" class="btn btn-custom mt-3 text-light border border-custom">Enviar</button>
+    </div>
+</form>
+{% endblock content %}
+{% block javascript %}
+<script>
+    $(".form-check").addClass("form-check-inline");
+</script>
+{% endblock javascript %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}{{title}}{% endblock title %}
+{% block content %}
+<div class="d-flex justify-content-end">
+    <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
+            class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
+</div>
+<form method="POST" class="mb-3 border border-custom p-3 rounded-3">
+    <h2 class="text-center">{{legend}}</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible" role="alert">{{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% csrf_token %}
+    {{form|crispy}}
+    <div class="mb-3 border">
+        <label for="elementos">Elementos</label>
+        <select id="elementos" name="elementos" class="form-select" multiple aria-label="multiple select example">
+            {% for elemento in elementos  %}
+            <option value="{{elemento.id}}">{{elemento.nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="input_elemento">Ingrese nuevo elemento</label>
+        <input id="input_elemento" class="form-control" type="text" aria-label="default input example"
+            pk-beneficio="{{object.id}}" name="input_elemento">
+        <a action="{% url 'beneficios:add_element' %}" id="agregar_elemento"
+            class="btn btn-custom mt-3 text-light border border-custom">Agregar
+        </a>
+        <a action="{% url 'beneficios:remove_element' %}" id="remover_elemento"
+            class="btn btn-custom mt-3 text-light border border-custom">Remover
+        </a>
+    </div>
+
+
+    <div class=" d-grid gap-2 col-2 mx-auto">
+        <button type="submit" class="btn btn-custom mt-3 text-light border border-custom">Enviar</button>
+    </div>
+</form>
+{% endblock content %}
+{% block javascript %}
+<script>
+    $("#agregar_elemento").click(function (event) {
+        $(".alert-danger").remove();
+        input_elemento = $("#input_elemento").val()
+        pk_beneficio = $("#input_elemento").attr("pk-beneficio")
+        if (!input_elemento) {
+            msg =
+                '<div class="alert alert-danger alert-dismissible" role="alert"> Elemento Vacio <button type = "button" class = "btn-close" data-bs-dismiss = "alert" aria-label = "Close" > </button> </div>'
+            $("#input_elemento").after(msg)
+        } else {
+            console.log()
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: {
+                    "input_elemento": input_elemento,
+                    "pk": pk_beneficio,
+                },
+                dataType: "json",
+                success: function (data) {
+                    window.location.href = "/beneficios/edit/" + pk_beneficio;
+                },
+            });
+        }
+    });
+
+    $("#remover_elemento").click(function (event) {
+        $(".alert-danger").remove();
+        pk_beneficio = $("#input_elemento").attr("pk-beneficio")
+        elementos = $('#elementos').val()
+        console.log(elementos)
+        $.ajax({
+            type: "POST",
+            url: $(this).attr("action"),
+            data: {
+                "elementos": elementos,
+                "pk": pk_beneficio,
+            },
+            dataType: "json",
+            success: function (data) {
+                window.location.href = "/beneficios/edit/" + pk_beneficio;
+            },
+        });
+    });
+</script>
+{% endblock %}

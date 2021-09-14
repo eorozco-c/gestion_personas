@@ -7,6 +7,9 @@ class  TipoBeneficio(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__ (self):
+        return self.nombre
+
 class Beneficio(models.Model):
     nombre = models.CharField(max_length=50)
     fecha_inicio = models.DateField()
@@ -15,3 +18,8 @@ class Beneficio(models.Model):
     tipo_beneficio = models.ForeignKey(TipoBeneficio, related_name="beneficios_tipo", on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class ElementoBeneficio(models.Model):
+    nombre = models.CharField(max_length=50)
+    beneficio = models.ForeignKey(Beneficio, related_name="beneficios_elemento", on_delete=models.CASCADE)
+

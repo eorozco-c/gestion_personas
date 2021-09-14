@@ -1,24 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}{{title}}{% endblock title %}
-{% block navbar %}
-<ul class="nav nav-pills nav-fill bg-custom">
-    <li class="nav-item ">
-        <a class="nav-link color-text-custom border border-danger" aria-current="page"
-            href="{% url 'trabajadores:index' %}">Trabajadores</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link color-text-custom border border-danger" href="{% url 'beneficios:index' %}">Beneficios</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link color-text-custom border border-danger"
-            href="{% url 'estadisticas:index' %}">Estadisticas</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link color-text-custom border border-danger" href="{% url 'master:index' %}">Configuraciones</a>
-    </li>
-</ul>
-{% endblock navbar %}
 {% block content %}
 <h1>Resumen:</h1>
 <div class="mb-3 mt-3 container col-12">
@@ -30,7 +12,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary  mb-1">Cantidad Trabajadores</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                90
+                                {{trabajadores}}
                             </div>
                         </div>
                         <div class="col-auto">
@@ -47,7 +29,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary  mb-1">Cantidad Beneficios</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                10
+                                {{beneficios}}
                             </div>
                         </div>
                         <div class="col-auto">

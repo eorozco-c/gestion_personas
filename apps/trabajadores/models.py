@@ -1,4 +1,4 @@
-from apps.beneficios.models import Beneficio
+from apps.beneficios.models import Beneficio, ElementoBeneficio
 from django.db import models
 from ..empresas.models import Empresa
 # Create your models here.
@@ -9,6 +9,9 @@ class Sector(models.Model):
     empresa = models.ForeignKey(Empresa, related_name="sector_empresa", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__ (self):
+        return self.nombre
 
 class Trabajador(models.Model):
     nombre = models.CharField(max_length=50)
@@ -27,6 +30,6 @@ class Trabajador(models.Model):
 class TrabajadorBeneficio(models.Model):
     trabajador = models.ForeignKey(Trabajador, related_name="beneficio_trabajador", on_delete=models.CASCADE)
     beneficio = models.ForeignKey(Beneficio, related_name="trabajador_beneficio", on_delete=models.CASCADE)
-    elemento = models.CharField(max_length=200)
+    elemento = models.ForeignKey(ElementoBeneficio, related_name="beneficio_trabajador_elemento", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,0 +1,31 @@
+{% if user.is_authenticated %}
+<ul class="nav nav-pills nav-fill bg-custom">
+    <li class="nav-item ">
+        <a class="nav-link color-text-custom border border-danger" aria-current="page"
+            href="{% url 'trabajadores:index' %}">Trabajadores</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link color-text-custom border border-danger" href="{% url 'beneficios:index' %}">Beneficios</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link color-text-custom border border-danger" href="{% url 'master:index' %}">Estadisticas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link dropdown-toggle color-text-custom border border-danger" data-bs-toggle="dropdown" href="#"
+            role="button" aria-expanded="false">Configuraciones</a>
+        <ul class="dropdown-menu dropdown-menu-dark">
+
+            <li><a class="dropdown-item" href="#">Sectores</a></li>
+            <li><a class="dropdown-item" href="#">Documentos</a></li>
+            <li><a class="dropdown-item" href="#">Tipo Documentos</a></li>
+            <li><a class="dropdown-item" href="#">Tipo Beneficios</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            {% if user.is_superuser %}
+            <li><a class="dropdown-item" href="{% url 'usuarios:register' %}">Crear Usuarios</a></li>
+            {% endif %}
+        </ul>
+    </li>
+</ul>
+{% endif %}

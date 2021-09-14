@@ -1,32 +1,8 @@
-from django.forms.models import model_to_dict
 from django import forms
-from django.http import request
 from .models import Usuario
 from django.core.exceptions import ValidationError
 from ..validaciones import obtenerUsuario, validarRut, validarLongitud, validarEmail, validarLetras
-import datetime,math,bcrypt
-
-class FormularioLogin(forms.ModelForm):
-
-    class Meta:
-        model = Usuario
-        fields = ["email", "password"]
-        
-        widgets = {
-            "password" : forms.PasswordInput(),
-        }
-
-    def clean(self):
-        try:
-            email = self.cleaned_data["email"]
-        except: 
-            raise ValidationError("Usuario o contraseña invalida")
-        password = self.cleaned_data["password"]
-        usuario = obtenerUsuario(email = email)
-        if not usuario:
-            raise ValidationError("Usuario o contraseña invalida")
-        if not bcrypt.checkpw(password.encode(), usuario.password.encode()):
-            raise ValidationError("Usuario o contraseña invalida")
+import datetime,math
 
 class FormularioRegistro(forms.ModelForm):
     confirmarPassword = forms.CharField(max_length=255, label="Confirmar Password")
@@ -35,7 +11,8 @@ class FormularioRegistro(forms.ModelForm):
     class Meta:
         OPCIONES_GENERO = [('1','Mujer'),('2','Hombre'),('3','Otro')]
         model = Usuario
-        fields = ["nombre", "apellido","rut","fecha_nacimiento","genero","perfil","email","password","confirmarPassword","empresa"]
+        # fields = "__all__"
+        fields = ["first_name", "last_name","rut","fecha_nacimiento","genero","perfil","is_superuser", "is_staff","email","password","confirmarPassword","empresa"]
 
         widgets = {
             "fecha_nacimiento" : forms.DateInput(
@@ -47,30 +24,31 @@ class FormularioRegistro(forms.ModelForm):
             "password" : forms.PasswordInput(),
             "genero" : forms.RadioSelect(
                 choices = OPCIONES_GENERO,
-                attrs= {
-                    "class" : "form-check-inline"
-                }
                 ),
         }
 
-    def clean_nombre(self):
-        nombre = self.cleaned_data["nombre"]
-        validarLetras(nombre,"nombre")
-        validarLongitud(nombre,"nombre",2,15)
-        return nombre
+    def clean_first_name(self):
+        first_name = self.cleaned_data["first_name"]
+        validarLetras(first_name,"first_name")
+        validarLongitud(first_name,"nombre",2,15)
+        return first_name
     
-    def clean_apellido(self):
-        apellido = self.cleaned_data["apellido"]
-        validarLetras(apellido,"apellido")
-        validarLongitud(apellido,"apellido",2,15)
-        return apellido
+    def clean_last_name(self):
+        last_name = self.cleaned_data["last_name"]
+        validarLetras(last_name,"last_name")
+        validarLongitud(last_name,"apellido",2,15)
+        return last_name
     
     def clean_rut(self):
         rut = self.cleaned_data["rut"]
         validarLongitud(rut,"rut",2,15)
         if validarRut(rut) == False:
             raise ValidationError("Rut Invalido")
-        return rut
+        try:
+            Usuario.objects.get(rut=rut)
+        except:
+            return rut
+        raise ValidationError("Rut ya existe")
 
     def clean_fecha_nacimiento(self):
         fecha_nacimiento = self.cleaned_data["fecha_nacimiento"]
@@ -86,6 +64,9 @@ class FormularioRegistro(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         validarEmail(email)
+        usuario = obtenerUsuario(email=email)
+        if usuario:
+            raise ValidationError("Correo ya existe")
         return email
 
     def clean(self):
@@ -101,7 +82,7 @@ class FormularioEditarRegistro(forms.ModelForm):
     class Meta:
         OPCIONES_GENERO = [('1','Mujer'),('2','Hombre'),('3','Otro')]
         model = Usuario
-        fields = ["nombre", "apellido","rut","fecha_nacimiento","genero","perfil","email","empresa"]
+        fields = ["first_name", "last_name","rut","fecha_nacimiento","genero","email"]
 
         widgets = {
             "fecha_nacimiento" : forms.DateInput(
@@ -169,12 +150,12 @@ class FormularioActualizarPass(forms.ModelForm):
         }
 
     def clean(self):
-        user_pass = self.instance.password
+        user_pass = self.instance
         actualPassword = self.cleaned_data["actualPassword"]
         password = self.cleaned_data["password"]
         confirm = self.cleaned_data["confirmarPassword"]
-        if not bcrypt.checkpw(actualPassword.encode(), user_pass.encode()):
-              raise ValidationError({"actualPassword" :"contraseña invalida"})
+        if not user_pass.check_password(actualPassword):
+            raise ValidationError({"actualPassword" :"contraseña invalida"})
         if len(password) < 8 or len(password) > 50:
             raise ValidationError({"password" : f"password debe tener entre 8 y 50 caracteres."})
         if password != confirm:

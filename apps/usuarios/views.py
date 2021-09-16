@@ -1,4 +1,3 @@
-from apps.validaciones import obtenerUsuario
 from django.utils.decorators import method_decorator
 from django.shortcuts import render,redirect
 from django.contrib import messages
@@ -87,51 +86,8 @@ class Profile(UpdateView):
         context["change_pass"] = FormularioActualizarPass(instance=self.request.user)
         return context
 
-# @login_required(login_url='/')
-# def profile(request):
-#     try:
-#         usuario = obtenerUsuario(id = request.user.id)
-#     except:
-#         return redirect("master:index")
-#     if request.method == "GET":
-#             form = FormularioEditarRegistro(instance=usuario)
-#             change_pass = FormularioActualizarPass(instance=usuario)
-#             context = {
-#                 "formulario_reg" : form,
-#                 "change_pass" : change_pass,
-#                 "usuario" : usuario
-#             }
-#             return render(request,"registration/perfil.html",context)
-#     else:
-#         if "changePassword" in request.POST:
-#             change_pass = FormularioActualizarPass(request.POST,instance=usuario)
-#             formRegistro = FormularioEditarRegistro(instance=usuario)
-#             if change_pass.is_valid():
-#                 usuario = change_pass.save(commit = False)
-#                 usuario.set_password(usuario.password)
-#                 usuario.save()
-#                 login(request, usuario)
-#                 messages.success(request,'Actualizado correctamente.')
-#                 return redirect("usuarios:profile")
-#             else:
-#                 context = {
-#                     "formulario_reg" : formRegistro,
-#                     "change_pass" : change_pass,
-#                     "usuario" : usuario,
-#                 }
-#                 return render(request,"registration/perfil.html",context)
-#         elif "editProfile" in request.POST:
-#             change_pass = FormularioActualizarPass()
-#             formRegistro = FormularioEditarRegistro(request.POST,instance=usuario)
-#             if formRegistro.is_valid():
-#                 usuario = formRegistro.save(commit = False)
-#                 usuario.save()
-#                 messages.success(request,'Actualizado correctamente.')
-#                 return redirect("usuarios:profile")
-#             else:
-#                 context = {
-#                     "formulario_reg" : formRegistro,
-#                     "change_pass" : change_pass,
-#                     "usuario" : usuario,
-#                 }
-#                 return render(request,"registration/perfil.html",context)
+    def get(self, request, pk):
+        usuario = self.get_object()
+        if self.request.user.empresa != usuario.empresa:
+            return redirect("master:index")
+        return super().get(request)

@@ -43,7 +43,7 @@
                         href="{% url 'beneficios:edit' pk=beneficio.id %}" usuario="{{usuario.id}}" id="edit"><i
                             class="fas fa-edit"></i></a>
                     <a class="open-modal btn btn-danger btn-sm text-light border border-dark m-1" data-bs-toggle="modal"
-                        data-bs-target="#modal" data-popup-url="{% url 'trabajadores:predestroy' pk=beneficio.id %}"
+                        data-bs-target="#modal" data-popup-url="{% url 'beneficios:predestroy' pk=beneficio.id %}"
                         href="">
                         <i class="fas fa-trash"></i> </a>
                 </td>
@@ -57,7 +57,7 @@
         <div class="modal-content" notempty='not'>
             <div class="modal-header bg-custom" notempty='not'>
                 <h5 class="modal-title color-text-custom" id="modalLabel" notempty='not'>Desea Eliminar al siguiente
-                    trabajador?:</h5>
+                    Beneficio?:</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" notempty='not'>
@@ -87,17 +87,15 @@
                 cursoDatos =
                     "<p notempty='not'> ID: " + data['id'] +
                     "</p> <p notempty='not'> Nombre: " +
-                    data['nombre'] + " " + data['apellido'] +
-                    "</p> <p notempty='not'> Email: " +
-                    data['email'] +
-                    "</p> <p notempty='not'> Rut: " +
-                    data['rut'] +
-                    "</p> <p notempty='not'> Sector: " +
-                    data['sector'] +
+                    data['nombre'] +
+                    "</p> <p notempty='not'> Fecha inicio: " +
+                    data['fecha_inicio'] +
+                    "</p> <p notempty='not'> Fecha fin: " +
+                    data['fecha_fin'] +
                     "</p>";
                 $(".modal-body").append(cursoDatos);
                 $("#delete").click(function () {
-                    window.location.href = "/trabajadores/destroy/" + data["id"];
+                    window.location.href = "/beneficios/destroy/" + data["id"];
                 })
             }
         });

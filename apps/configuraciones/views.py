@@ -79,7 +79,9 @@ def sectores_destroy(request,pk):
             sector = Sector.objects.get(id=pk)
         except:
             return redirect("configuraciones:sectores") 
-        try: 
+        try:
+            if request.user.empresa != sector.empresa:
+                return redirect("master:index")
             sector.delete()
         except:
             messages.success(request,'Existen Trabajadores asociados al Sector que desea eliminar.', extra_tags='danger')
@@ -150,6 +152,8 @@ def documentos_destroy(request,pk):
         except:
             return redirect("configuraciones:documentos") 
         try: 
+            if request.user.empresa != tipo_documento.empresa:
+                return redirect("master:index")
             tipo_documento.delete()
         except:
             messages.success(request,'Existen Trabajadores o Beneficios asociados al Tipo de documento que desea eliminar.', extra_tags='danger')
@@ -220,7 +224,9 @@ def beneficios_destroy(request,pk):
             tipo_beneficio = TipoBeneficio.objects.get(id=pk)
         except:
             return redirect("configuraciones:beneficios") 
-        try: 
+        try:
+            if request.user.empresa != tipo_beneficio.empresa:
+                return redirect("master:index")
             tipo_beneficio.delete()
         except:
             messages.success(request,'Existen Trabajadores asociados al Beneficio que desea eliminar.', extra_tags='danger')

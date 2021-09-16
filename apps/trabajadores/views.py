@@ -110,5 +110,7 @@ def destroy(request,pk):
             trabajador = Trabajador.objects.get(id=pk)
         except:
             return redirect("trabajadores:index")
+        if request.user.empresa != trabajador.empresa:
+            return redirect("master:index")
         trabajador.delete()
     return redirect("trabajadores:index")

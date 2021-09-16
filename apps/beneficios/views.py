@@ -111,3 +111,31 @@ def removeElement(request):
     except:
         return redirect("beneficios:index")
     return JsonResponse({"resultado":"eliminados correctamente"})
+
+@login_required(login_url="/")
+def predestroy(request, pk):
+    if request.method == "GET":
+        try:
+            beneficio = Beneficio.objects.get(id=pk)
+        except:
+            return redirect("beneficios:index")
+        context={
+            'id' : beneficio.id,
+            'nombre': beneficio.nombre,
+            'fecha_inicio' : beneficio.fecha_inicio,
+            'fecha_fin' : beneficio.fecha_fin,
+        }
+        return JsonResponse(context)
+    return redirect("beneficios:index")
+
+@login_required(login_url="/")
+def destroy(request,pk):
+    if request.method == "GET":
+        try:
+            beneficio = Beneficio.objects.get(id=pk)
+        except:
+            return redirect("beneficios:index")
+        if request.user.empresa != beneficio.empresa:
+            return redirect("master:index")
+        beneficio.delete()
+    return redirect("beneficios:index")

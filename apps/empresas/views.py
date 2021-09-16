@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 # Create your views here.
 
 class CrearEmpresa(CreateView):
-    template_name = "generico.html"
+    template_name = "formularios/generico.html"
     form_class = FormularioEmpresa
     success_url = reverse_lazy("master:index")
 

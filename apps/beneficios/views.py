@@ -39,6 +39,11 @@ class CreateBeneficio(CreateView):
         context['legend'] = "Nuevo Beneficio"
         context['appname'] = "beneficios"
         return context
+    
+    def get_form_kwargs(self):
+        kwargs = super(CreateBeneficio, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
 class DetalleBeneficio(DetailView):
     template_name = "beneficios/detalles_beneficios.html"
@@ -48,6 +53,12 @@ class DetalleBeneficio(DetailView):
         context = super(DetalleBeneficio, self).get_context_data(**kwargs)
         context['appname'] = "beneficios"
         return context
+    
+    def get(self, request, pk):
+        beneficio = self.get_object()
+        if self.request.user.empresa != beneficio.empresa:
+            return redirect("master:index")
+        return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class EditBeneficio(UpdateView):
@@ -64,33 +75,16 @@ class EditBeneficio(UpdateView):
         context['appname'] = "beneficios"
         return context
 
-# @login_required(login_url="/")
-# def predestroy(request, pk):
-#     if request.method == "GET":
-#         try:
-#             trabajador = Trabajador.objects.get(id=pk)
-#         except:
-#             return redirect("trabajadores:index")
-#         context={
-#             'id' : trabajador.id,
-#             'nombre': trabajador.nombre,
-#             'apellido' : trabajador.apellido,
-#             'email' : trabajador.email,
-#             'rut' : trabajador.rut,
-#             'sector' : trabajador.sector.nombre,
-#         }
-#         return JsonResponse(context)
-#     return redirect("trabajadores:index")
+    def get_form_kwargs(self):
+        kwargs = super(EditBeneficio, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
-# @login_required(login_url="/")
-# def destroy(request,pk):
-#     if request.method == "GET":
-#         try:
-#             trabajador = Trabajador.objects.get(id=pk)
-#         except:
-#             return redirect("trabajadores:index")
-#         trabajador.delete()
-#     return redirect("trabajadores:index")
+    def get(self, request, pk):
+        beneficio = self.get_object()
+        if self.request.user.empresa != beneficio.empresa:
+            return redirect("master:index")
+        return super().get(request)
 
 @login_required(login_url="/")
 @csrf_exempt
@@ -116,5 +110,4 @@ def removeElement(request):
             e.delete()
     except:
         return redirect("beneficios:index")
-    # elemento.delete()
     return JsonResponse({"resultado":"eliminados correctamente"})

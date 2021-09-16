@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -136,6 +137,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
 
 #template Bootstrap 4
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 LOGIN_URL = "master:menu"
 AUTH_USER_MODEL = "usuarios.Usuario"

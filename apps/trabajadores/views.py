@@ -38,7 +38,13 @@ class CreateTrabajador(CreateView):
         context['legend'] = "Nuevo Trabajador"
         context['appname'] = "trabajadores"
         return context
+    
+    def get_form_kwargs(self):
+        kwargs = super(CreateTrabajador, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
+@method_decorator(login_required, name='dispatch')
 class DetalleTrabajador(DetailView):
     template_name = "trabajadores/detalles_trabajadores.html"
     model = Trabajador
@@ -47,6 +53,12 @@ class DetalleTrabajador(DetailView):
         context = super(DetalleTrabajador, self).get_context_data(**kwargs)
         context['appname'] = "trabajadores"
         return context
+    
+    def get(self, request, pk):
+        trabajador = self.get_object()
+        if self.request.user.empresa != trabajador.empresa:
+            return redirect("master:index")
+        return super().get(request)
 
 @method_decorator(login_required, name='dispatch')
 class EditTrabajador(UpdateView):
@@ -61,6 +73,17 @@ class EditTrabajador(UpdateView):
         context['legend'] = "Editar Trabajador"
         context['appname'] = "trabajadores"
         return context
+    
+    def get_form_kwargs(self):
+        kwargs = super(EditTrabajador, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+    
+    def get(self, request, pk):
+        trabajador = self.get_object()
+        if self.request.user.empresa != trabajador.empresa:
+            return redirect("master:index")
+        return super().get(request)
 
 @login_required(login_url="/")
 def predestroy(request, pk):

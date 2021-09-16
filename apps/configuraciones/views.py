@@ -51,6 +51,12 @@ class EditSector(UpdateView):
         context['appname'] = "configuraciones/sectores"
         return context
 
+    def get(self, request, pk):
+        sector = self.get_object()
+        if self.request.user.empresa != sector.empresa:
+            return redirect("master:index")
+        return super().get(request)
+
 @login_required(login_url="/")
 def sectores_predestroy(request, pk):
     if request.method == "GET":
@@ -116,6 +122,12 @@ class EditTipoDocumento(UpdateView):
         context['appname'] = "configuraciones/documentos"
         return context
 
+    def get(self, request, pk):
+        tipo_documento = self.get_object()
+        if self.request.user.empresa != tipo_documento.empresa:
+            return redirect("master:index")
+        return super().get(request)
+
 @login_required(login_url="/")
 def documentos_predestroy(request, pk):
     if request.method == "GET":
@@ -180,6 +192,12 @@ class EditTipoBeneficio(UpdateView):
         context['legend'] = "Editar Tipo de beneficios"
         context['appname'] = "configuraciones/beneficios"
         return context
+
+    def get(self, request, pk):
+        tipo_beneficio = self.get_object()
+        if self.request.user.empresa != tipo_beneficio.empresa:
+            return redirect("master:index")
+        return super().get(request)
 
 @login_required(login_url="/")
 def beneficios_predestroy(request, pk):

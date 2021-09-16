@@ -14,7 +14,7 @@ def index(request):
 @login_required(login_url='/')
 def menu(request):
     context = {
-        "trabajadores" : Trabajador.objects.count(),
-        "beneficios" : Beneficio.objects.count(),
+        "trabajadores" : Trabajador.objects.filter(empresa=request.user.empresa).count(),
+        "beneficios" : Beneficio.objects.filter(empresa=request.user.empresa).count,
     }
     return render(request, "menu.html", context)

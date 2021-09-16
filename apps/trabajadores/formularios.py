@@ -1,10 +1,15 @@
 from django import forms
-from .models import Trabajador
+from .models import Trabajador, Sector
 from django.core.exceptions import ValidationError
 from ..validaciones import validarRut, validarLongitud, validarEmail, validarLetras
 import datetime,math
 
 class FormularioNuevoTrabajador(forms.ModelForm):
+
+    def __init__(self,*args,**kwargs):
+        self.user = kwargs.pop('user') 
+        super(FormularioNuevoTrabajador,self ).__init__(*args,**kwargs) # populates the post
+        self.fields['sector'].queryset = Sector.objects.filter(empresa=self.user.empresa)
 
     class Meta:
         OPCIONES_GENERO = [('1','Mujer'),('2','Hombre'),('3','Otro')]

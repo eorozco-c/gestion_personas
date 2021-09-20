@@ -5,8 +5,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import Trabajador
+from .resources import TrabajadorExportResource
 from .formularios import FormularioNuevoTrabajador
 
 
@@ -113,4 +114,16 @@ def destroy(request,pk):
         if request.user.empresa != trabajador.empresa:
             return redirect("master:index")
         trabajador.delete()
+    return redirect("trabajadores:index")
+
+@login_required(login_url="/")
+def TrabajadorExport(request):
+    if request.method == "GET":
+        trabajador_resource = TrabajadorExportResource()
+        query = Trabajador.objects.all()
+        dataset =  trabajador_resource.export(query)
+        print(dataset["genero"])
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="trabajadores.csv"'
+        return response
     return redirect("trabajadores:index")

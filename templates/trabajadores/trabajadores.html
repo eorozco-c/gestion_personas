@@ -12,7 +12,8 @@
     <a href="{% url 'trabajadores:new_worker' %}" class="btn btn-success mt-3 text-light border border-custom">Nuevo
         Trabajador</a>
     <a href="{% url 'master:index' %}" class="btn btn-custom mt-3 text-light border border-custom">Cargar lista</a>
-    <a href="{% url 'master:index' %}" class="btn btn-custom mt-3 text-light border border-custom">Descargar lista</a>
+    <a href="{% url 'trabajadores:export' %}" class="btn btn-custom mt-3 text-light border border-custom">Descargar
+        lista</a>
 </div>
 <div class="table-responsive mt-3">
     <table id="tabla_trabajadores" class="table table-striped table-hover table-borderless" style="width:100%">

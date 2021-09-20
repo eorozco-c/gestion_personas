@@ -10,4 +10,5 @@ urlpatterns = [
     path('edit/<int:pk>',views.EditTrabajador.as_view(), name="edit"),
     path('predestroy/<int:pk>',views.predestroy, name="predestroy"),
     path('destroy/<int:pk>',views.destroy, name="destroy"),
+    path('export',views.TrabajadorExport, name="export"),
 ]

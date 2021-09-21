@@ -145,7 +145,7 @@ def destroy(request,pk):
 def BeneficioExport(request):
     if request.method == "GET":
         beneficio_resource = BeneficioExportResource()
-        query = Beneficio.objects.all()
+        query = Beneficio.objects.filter(empresa=request.user.empresa)
         dataset =  beneficio_resource.export(query)
         response = HttpResponse(dataset.csv, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="beneficios.csv"'

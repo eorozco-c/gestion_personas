@@ -11,7 +11,7 @@ from .models import Sector, Trabajador
 from .resources import TrabajadorExportResource
 from .formularios import FormularioNuevoTrabajador
 import csv, io, datetime
-from apps.validaciones import validarEmail, validarEmailReturn, validarLetrasReturn, validarRut
+from apps.validaciones import validarLetrasReturn, validarRut
 
 
 # Create your views here.
@@ -123,7 +123,7 @@ def destroy(request,pk):
 def TrabajadorExport(request):
     if request.method == "GET":
         trabajador_resource = TrabajadorExportResource()
-        query = Trabajador.objects.all()
+        query = Trabajador.objects.filter(empresa=request.user.empresa)
         dataset =  trabajador_resource.export(query)
         response = HttpResponse(dataset.csv, content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="trabajadores.csv"'

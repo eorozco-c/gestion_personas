@@ -19,6 +19,21 @@ def validarLetras(cadena,campo):
     if not LETTER_REGEX.match(cadena):
         raise ValidationError(f"{campo} debe contener solo letras y sin espacio")
 
+def validarLongitudReturn(cadena,minlength = 3, maxlength = 10):
+    if len(cadena) < minlength or len(cadena) > maxlength:
+        return False
+    return True
+
+def validarEmailReturn(email):
+    if not EMAIL_REGEX.match(email):     
+       return False
+    return True
+
+def validarLetrasReturn(cadena):
+    if not LETTER_REGEX.match(cadena):
+        return False
+    return True
+
 def validarRut(rut):
     if not RUT_REGEX.match(rut):
         return False

@@ -11,4 +11,5 @@ urlpatterns = [
     path('predestroy/<int:pk>',views.predestroy, name="predestroy"),
     path('destroy/<int:pk>',views.destroy, name="destroy"),
     path('export',views.TrabajadorExport, name="export"),
+    path('import',views.TrabajadorImport, name="import"),
 ]

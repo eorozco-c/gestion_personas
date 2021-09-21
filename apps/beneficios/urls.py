@@ -11,5 +11,6 @@ urlpatterns = [
     path('predestroy/<int:pk>',views.predestroy, name="predestroy"),
     path('destroy/<int:pk>',views.destroy, name="destroy"),
     path('add_element',views.addElement,name="add_element"),
-    path('remove_element',views.removeElement,name="remove_element")
+    path('remove_element',views.removeElement,name="remove_element"),
+    path('export',views.BeneficioExport,name="export")
 ]

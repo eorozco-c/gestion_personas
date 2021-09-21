@@ -6,9 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import Beneficio, ElementoBeneficio
 from .formularios import FormularioNuevoBeneficio
+from .resources import BeneficioExportResource
 
 
 # Create your views here.
@@ -138,4 +139,15 @@ def destroy(request,pk):
         if request.user.empresa != beneficio.empresa:
             return redirect("master:index")
         beneficio.delete()
+    return redirect("beneficios:index")
+
+@login_required(login_url="/")
+def BeneficioExport(request):
+    if request.method == "GET":
+        beneficio_resource = BeneficioExportResource()
+        query = Beneficio.objects.all()
+        dataset =  beneficio_resource.export(query)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="beneficios.csv"'
+        return response
     return redirect("beneficios:index")

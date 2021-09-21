@@ -24,7 +24,7 @@ class Trabajador(models.Model):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     email = models.EmailField(max_length=254)
-    rut = models.CharField(max_length=20)
+    rut = models.CharField(max_length=20, unique=True)
     fecha_nacimiento = models.DateField()
     genero = models.PositiveIntegerField(default=1)
     empresa = models.ForeignKey(Empresa, related_name="trabajador_empresa", on_delete=models.CASCADE)

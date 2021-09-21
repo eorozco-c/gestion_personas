@@ -1,7 +1,7 @@
 from apps.beneficios.models import TipoBeneficio
 from apps.trabajadores.models import Sector
 from apps.documentos.models import TipoDocumento
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .formularios import FormularioNuevoSector, FormularioTipoBeneficio, FormularioTipoDocumento
 from django.contrib import messages
+from .resources import  SectorExportResource, TipoBeneficioExportResource, TipoDocumentoExportResource
 # Create your views here.
 def index(request):
     return redirect("master:index")
@@ -231,3 +232,36 @@ def beneficios_destroy(request,pk):
         except:
             messages.success(request,'Existen Trabajadores asociados al Beneficio que desea eliminar.', extra_tags='danger')
     return redirect("configuraciones:beneficios")
+
+@login_required(login_url="/")
+def SectorExport(request):
+    if request.method == "GET":
+        sector_resource = SectorExportResource()
+        query = Sector.objects.filter(empresa=request.user.empresa)
+        dataset =  sector_resource.export(query)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="sectores.csv"'
+        return response
+    return redirect("configuraciones:sectores")
+
+@login_required(login_url="/")
+def TipoBeneficioExport(request):
+    if request.method == "GET":
+        tipo_beneficio_resource = TipoBeneficioExportResource()
+        query = TipoBeneficio.objects.filter(empresa=request.user.empresa)
+        dataset =  tipo_beneficio_resource.export(query)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="tipo_beneficios.csv"'
+        return response
+    return redirect("configuraciones:beneficios")
+
+@login_required(login_url="/")
+def TipoDocumentoExport(request):
+    if request.method == "GET":
+        tipo_documento_resource = TipoDocumentoExportResource()
+        query = TipoDocumento.objects.filter(empresa=request.user.empresa)
+        dataset =  tipo_documento_resource.export(query)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="tipo_documentos.csv"'
+        return response
+    return redirect("configuraciones:documentos")

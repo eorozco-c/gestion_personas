@@ -17,4 +17,7 @@ urlpatterns = [
     path('beneficios/edit/<int:pk>',views.EditTipoBeneficio.as_view(), name="beneficios_edit"),
     path('beneficios/predestroy/<int:pk>',views.beneficios_predestroy, name="beneficios_predestroy"),
     path('beneficios/destroy/<int:pk>',views.beneficios_destroy, name="beneficios_destroy"),
+    path('exportSector',views.SectorExport, name="exportSector"),
+    path('exportTipoBeneficio',views.TipoBeneficioExport, name="exportTipoBeneficio"),
+    path('exportTipoDocumento',views.TipoDocumentoExport, name="exportTipoDocumento"),
 ]

@@ -1,4 +1,6 @@
-from apps.documentos.models import DocumentoBeneficio, DocumentoTrabajador, TipoDocumento
+from apps.trabajadores.models import Trabajador, TrabajadorBeneficio
+from apps.documentos.models import DocumentoBeneficio, TipoDocumento
+from django.db.models import Count
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -57,8 +59,10 @@ class DetalleBeneficio(DetailView):
         context = super(DetalleBeneficio, self).get_context_data(**kwargs)
         tipo_documentos = TipoDocumento.objects.filter(empresa=self.request.user.empresa)
         documentos = DocumentoBeneficio.objects.filter(beneficio=self.object)
+        trabajador_beneficios = TrabajadorBeneficio.objects.filter(beneficio=self.object)
         context['documentos'] = documentos
         context["tipo_documentos"] = tipo_documentos
+        context["trabajador_beneficios"] = trabajador_beneficios
         context['appname'] = "beneficios"
         return context
     

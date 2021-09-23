@@ -120,11 +120,6 @@
 {% endblock content %}
 {% block javascript %}
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-
     $("#beneficios").click(function (event) {
         pk_beneficio = $("#beneficios").val()
         if (!pk_beneficio) {

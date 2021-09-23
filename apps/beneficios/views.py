@@ -1,7 +1,9 @@
+from apps.documentos.models import DocumentoBeneficio, DocumentoTrabajador, TipoDocumento
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -10,7 +12,8 @@ from django.http import JsonResponse, HttpResponse
 from .models import Beneficio, ElementoBeneficio
 from .formularios import FormularioNuevoBeneficio
 from .resources import BeneficioExportResource
-
+from django.core.files.storage import  FileSystemStorage
+import os, shutil
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -52,6 +55,10 @@ class DetalleBeneficio(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetalleBeneficio, self).get_context_data(**kwargs)
+        tipo_documentos = TipoDocumento.objects.filter(empresa=self.request.user.empresa)
+        documentos = DocumentoBeneficio.objects.filter(beneficio=self.object)
+        context['documentos'] = documentos
+        context["tipo_documentos"] = tipo_documentos
         context['appname'] = "beneficios"
         return context
     
@@ -151,3 +158,37 @@ def BeneficioExport(request):
         response['Content-Disposition'] = 'attachment; filename="beneficios.csv"'
         return response
     return redirect("beneficios:index")
+
+@login_required(login_url="/")
+def CargaDocumento(request, pk):
+    if request.method == "POST":
+        if not request.FILES:
+            messages.success(request,f'Favor carge un documento',extra_tags='danger')
+            return redirect("beneficios:detail", pk=pk)
+        archivo = request.FILES["archivo"]
+        format = False
+        formatos = [".PDF",".pdf"]
+        for formato in formatos:
+            if formato in archivo.name:
+                format = True
+                break
+        if format:
+            tipo_documentos = request.POST["tipo_documentos"]
+            fileStorage =  FileSystemStorage(f"media/beneficios/{pk}")
+            fileStorage.save(archivo.name, archivo)
+            DocumentoBeneficio.objects.create(nombre=archivo,documento=f"media/beneficios/{pk}/{archivo}",tipo_documento_id=tipo_documentos,beneficio_id=pk)
+            messages.success(request,f'Cargado correctamente',extra_tags='success')
+            return redirect("beneficios:detail", pk=pk)
+        messages.success(request,f'Favor cargue un documento con extension .pdf',extra_tags='danger')
+    return redirect("beneficios:detail", pk=pk)
+
+@login_required(login_url="/")
+def DescargaDocumento(request, pk):
+    if request.method == "POST":
+        ruta = request.POST["documentos"]
+        if os.path.exists(ruta):
+            with open(ruta,'rb') as fh:
+                respuesta = HttpResponse(fh.read(), content_type="application/force_download")
+                respuesta["Content-Disposition"] = f"inline; filename={os.path.basename(ruta)}"
+                return respuesta
+    return redirect("beneficios:detail", pk=pk)

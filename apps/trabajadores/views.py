@@ -13,7 +13,7 @@ from django.http import JsonResponse, HttpResponse
 from .models import Sector, Trabajador, TrabajadorBeneficio
 from .resources import TrabajadorExportResource
 from .formularios import FormularioNuevoTrabajador
-import csv, io, datetime, os
+import csv, io, datetime, os, shutil
 from apps.validaciones import validarLetrasReturn, validarRut
 from apps.documentos.models import DocumentoTrabajador, TipoDocumento
 
@@ -127,7 +127,18 @@ def destroy(request,pk):
             return redirect("trabajadores:index")
         if request.user.empresa != trabajador.empresa:
             return redirect("master:index")
-        trabajador.delete()
+        try:
+            elementos = TrabajadorBeneficio.objects.filter(trabajador=trabajador)
+            for e in elementos:
+                e.elemento.estado = False
+                e.elemento.save()
+                e.delete()
+            trabajador.delete()
+        except:
+            trabajador.delete()
+        ruta = str(f"media/trabajadores/{pk}")
+        if os.path.exists(ruta):
+            shutil.rmtree(ruta)
     return redirect("trabajadores:index")
 
 @login_required(login_url="/")
@@ -144,44 +155,45 @@ def TrabajadorExport(request):
 @login_required(login_url="/")
 def TrabajadorImport(request):
     if request.method == 'POST':
-        csv_file = request.FILES["myfile"]
-        data_set = csv_file.read().decode('UTF-8')
-        io_string = io.StringIO(data_set)
-        next(io_string)
-        for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-            if len(column) < 6:
-                messages.success(request,f'registro {column} - Faltan campos.')
-                return redirect("trabajadores:index")
-            if column[5] == "F":
-                genero = 1
-            elif column[5] == "M":
-                genero = 2
-            else:
-                genero = 3
-            try:
-                sector = Sector.objects.get(nombre__iexact=column[6])
-            except:
-                messages.success(request,f'registro {column} - Sector invalido.', extra_tags='danger')
-                return redirect("trabajadores:index")
-            try:
-                fecha_nacimiento = datetime.datetime.strptime(column[4], "%d-%m-%Y")
-            except:
-                fecha_nacimiento = datetime.datetime.strptime(column[4], "%Y-%m-%d")
-            if not validarLetrasReturn(column[0]):
-                messages.success(request,f'registro {column} - nombre invalido.',extra_tags='danger')
-                return redirect("trabajadores:index")
-            if not validarLetrasReturn(column[1]):
-                messages.success(request,f'registro {column} - apellido invalido.',extra_tags='danger')
-                return redirect("trabajadores:index")
-            if not validarRut(column[3]):
-                messages.success(request,f'registro {column} - Rut invalido.',extra_tags='danger')
-                return redirect("trabajadores:index")
-            updated_values = {'nombre': column[0], 'apellido' : column[1], 'email':column[2],'fecha_nacimiento':fecha_nacimiento,'genero':genero,'sector':sector,'empresa':request.user.empresa,}
-            created = Trabajador.objects.update_or_create(
-                rut=column[3],
-                defaults=updated_values
-            )
-    messages.success(request,f'registros creados correctamente.',extra_tags='success')
+        if request.FILES:
+            csv_file = request.FILES["myfile"]
+            data_set = csv_file.read().decode('UTF-8')
+            io_string = io.StringIO(data_set)
+            next(io_string)
+            for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+                if len(column) < 6:
+                    messages.success(request,f'registro {column} - Faltan campos.')
+                    return redirect("trabajadores:index")
+                if column[5] == "F":
+                    genero = 1
+                elif column[5] == "M":
+                    genero = 2
+                else:
+                    genero = 3
+                try:
+                    sector = Sector.objects.get(nombre__iexact=column[6])
+                except:
+                    messages.success(request,f'registro {column} - Sector invalido.', extra_tags='danger')
+                    return redirect("trabajadores:index")
+                try:
+                    fecha_nacimiento = datetime.datetime.strptime(column[4], "%d-%m-%Y")
+                except:
+                    fecha_nacimiento = datetime.datetime.strptime(column[4], "%Y-%m-%d")
+                if not validarLetrasReturn(column[0]):
+                    messages.success(request,f'registro {column} - nombre invalido.',extra_tags='danger')
+                    return redirect("trabajadores:index")
+                if not validarLetrasReturn(column[1]):
+                    messages.success(request,f'registro {column} - apellido invalido.',extra_tags='danger')
+                    return redirect("trabajadores:index")
+                if not validarRut(column[3]):
+                    messages.success(request,f'registro {column} - Rut invalido.',extra_tags='danger')
+                    return redirect("trabajadores:index")
+                updated_values = {'nombre': column[0], 'apellido' : column[1], 'email':column[2],'fecha_nacimiento':fecha_nacimiento,'genero':genero,'sector':sector,'empresa':request.user.empresa,}
+                created = Trabajador.objects.update_or_create(
+                    rut=column[3],
+                    defaults=updated_values
+                )
+            messages.success(request,f'registros creados correctamente.',extra_tags='success')
     return redirect("trabajadores:index")
 
 @login_required(login_url="/")

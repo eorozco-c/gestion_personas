@@ -6,6 +6,13 @@
     <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
             class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
 </div>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible" role="alert">{{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 <div class="mb-3 mt-3 container col-12">
     <div class="row">
         <div class="col-xl-6 col-md-6 mb-4">
@@ -17,6 +24,46 @@
                 <p>Fecha fin: {{object.fecha_fin}}</p>
                 <hr>
                 <h2>Documentos</h2>
+                <form method="post" enctype="multipart/form-data" action="{% url 'beneficios:cargaDoc' pk=object.id %}"
+                    class="mb-3">
+                    {% csrf_token %}
+                    <legend>Cargar documentos</legend>
+                    <div class="mb-3">
+                        <label for="tipo_documento" class="requiredField">
+                            Tipo Documento<span class="asteriskField">*</span> </label>
+                        <select name="tipo_documentos" class="select form-control" required="" id="tipo_documento">
+                            <option value="" selected="" disabled>---------</option>
+                            {% for tipo_documento in tipo_documentos  %}
+                            <option value="{{tipo_documento.id}}">{{tipo_documento.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="archivo">
+                        <button type="submit" class="btn btn-custom text-light border border-custom">Upload</button>
+                        <i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="right"
+                            title="Solo archivos con extensión PDF"></i>
+                    </div>
+                </form>
+                <form method="post" enctype="multipart/form-data"
+                    action="{% url 'beneficios:descargaDoc' pk=object.id %}" class="mb-3">
+                    {% csrf_token %}
+                    <legend>Descargar documentos</legend>
+                    <div class="mb-3">
+                        <label for="documento" class="requiredField">
+                            Documento<span class="asteriskField">*</span> </label>
+                        <div class="input-group">
+                            <select name="documentos" class="select form-control" required="" id="documento">
+                                <option value="" selected="" disabled>---------</option>
+                                {% for documento in documentos  %}
+                                <option value="{{documento.documento}}">{{documento.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit"
+                                class="btn btn-custom text-light border border-custom">Descargar</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         <div class="col-xl-6 col-md-6 mb-4">

@@ -12,4 +12,9 @@ urlpatterns = [
     path('destroy/<int:pk>',views.destroy, name="destroy"),
     path('export',views.TrabajadorExport, name="export"),
     path('import',views.TrabajadorImport, name="import"),
+    path('cargaDoc/<int:pk>',views.CargaDocumento, name="cargaDoc"),
+    path('descargaDoc/<int:pk>',views.DescargaDocumento, name="descargaDoc"),
+    path('obtieneElementos/<int:pk>',views.ElementosBeneficio, name="obtieneElementos"),
+    path('agregarBeneficio/<int:pk>',views.AgregarBeneficio, name="agregarBeneficio"),
+    path('remove_element',views.removeElement,name="remove_element"),
 ]

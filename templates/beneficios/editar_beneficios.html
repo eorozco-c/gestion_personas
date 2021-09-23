@@ -85,7 +85,8 @@
             },
             dataType: "json",
             success: function (data) {
-                window.location.href = "/beneficios/edit/" + pk_beneficio;
+                window.location.reload()
+                //window.location.href = "/beneficios/edit/" + pk_beneficio;
             },
         });
     });

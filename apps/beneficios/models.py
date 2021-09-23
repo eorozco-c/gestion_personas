@@ -36,6 +36,7 @@ class Beneficio(models.Model):
 class ElementoBeneficio(models.Model):
     nombre = models.CharField(max_length=50)
     beneficio = models.ForeignKey(Beneficio, related_name="beneficios_elemento", on_delete=models.CASCADE)
+    estado = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         for field_name in ['nombre']:

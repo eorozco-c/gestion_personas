@@ -25,12 +25,12 @@ class DocumentoTrabajador(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        for field_name in ['nombre']:
-            val = getattr(self, field_name, False)
-            if val:
-                setattr(self, field_name, val.capitalize())
-        super(DocumentoTrabajador, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     for field_name in ['nombre']:
+    #         val = getattr(self, field_name, False)
+    #         if val:
+    #             setattr(self, field_name, val.capitalize())
+    #     super(DocumentoTrabajador, self).save(*args, **kwargs)
 
 class DocumentoBeneficio(models.Model):
     nombre = models.CharField(max_length=200)

@@ -1,18 +1,21 @@
+from apps.beneficios.models import Beneficio, ElementoBeneficio
 from django.contrib import messages
+from django.core.files.storage import  FileSystemStorage
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponse
-from .models import Sector, Trabajador
+from .models import Sector, Trabajador, TrabajadorBeneficio
 from .resources import TrabajadorExportResource
 from .formularios import FormularioNuevoTrabajador
-import csv, io, datetime
+import csv, io, datetime, os
 from apps.validaciones import validarLetrasReturn, validarRut
-
+from apps.documentos.models import DocumentoTrabajador, TipoDocumento
 
 # Create your views here.
 @method_decorator(login_required, name='dispatch')
@@ -55,6 +58,14 @@ class DetalleTrabajador(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetalleTrabajador, self).get_context_data(**kwargs)
+        tipo_documentos = TipoDocumento.objects.filter(empresa=self.request.user.empresa)
+        documentos = DocumentoTrabajador.objects.filter(trabajador=self.object)
+        beneficios = Beneficio.objects.filter(empresa=self.request.user.empresa)
+        trabajador_beneficios = TrabajadorBeneficio.objects.filter(trabajador=self.object)
+        context['documentos'] = documentos
+        context["tipo_documentos"] = tipo_documentos
+        context["beneficios"] = beneficios
+        context["trabajador_beneficios"] = trabajador_beneficios
         context['appname'] = "trabajadores"
         return context
     
@@ -172,3 +183,79 @@ def TrabajadorImport(request):
             )
     messages.success(request,f'registros creados correctamente.',extra_tags='success')
     return redirect("trabajadores:index")
+
+@login_required(login_url="/")
+def CargaDocumento(request, pk):
+    if request.method == "POST":
+        if not request.FILES:
+            messages.success(request,f'Favor carge un documento',extra_tags='danger')
+            return redirect("trabajadores:detail_worker", pk=pk)
+        archivo = request.FILES["archivo"]
+        format = False
+        formatos = [".PDF",".pdf"]
+        for formato in formatos:
+            if formato in archivo.name:
+                format = True
+                break
+        if format:
+            tipo_documentos = request.POST["tipo_documentos"]
+            fileStorage =  FileSystemStorage(f"media/trabajadores/{pk}")
+            fileStorage.save(archivo.name, archivo)
+            DocumentoTrabajador.objects.create(nombre=archivo,documento=f"media/trabajadores/{pk}/{archivo}",tipo_documento_id=tipo_documentos,trabajador_id=pk)
+            messages.success(request,f'Cargado correctamente',extra_tags='success')
+            return redirect("trabajadores:detail_worker", pk=pk)
+        messages.success(request,f'Favor cargue un documento con extension .pdf',extra_tags='danger')
+    return redirect("trabajadores:detail_worker", pk=pk)
+
+@login_required(login_url="/")
+def DescargaDocumento(request, pk):
+    if request.method == "POST":
+        ruta = request.POST["documentos"]
+        if os.path.exists(ruta):
+            with open(ruta,'rb') as fh:
+                respuesta = HttpResponse(fh.read(), content_type="application/force_download")
+                respuesta["Content-Disposition"] = f"inline; filename={os.path.basename(ruta)}"
+                return respuesta
+    return redirect("trabajadores:detail_worker", pk=pk)
+
+@login_required(login_url="/")
+def ElementosBeneficio(request, pk):
+    if request.method == "GET":
+        try:
+            elementos = ElementoBeneficio.objects.filter(beneficio_id=pk,estado=False)
+            data = list(elementos.values())
+            context = {
+                "data" : data,
+            }
+            return JsonResponse(context)
+        except:
+            return  JsonResponse({"response":"Error"})
+
+@login_required(login_url="/")
+def AgregarBeneficio(request, pk):
+    if request.method == "POST":
+        try:
+            trabajador = Trabajador.objects.get(id=pk)
+            beneficio = Beneficio.objects.get(id=request.POST["beneficios"])
+            elemento = ElementoBeneficio.objects.get(id=request.POST["elementosBeneficio"])
+            elemento.estado = True
+            elemento.save()
+            beneficioTrabajador = TrabajadorBeneficio.objects.create(trabajador=trabajador,beneficio=beneficio,elemento=elemento)
+            return redirect("trabajadores:detail_worker", pk=pk)
+        except:
+            messages.success(request,f'Error al asignar elemento',extra_tags='danger')
+            return redirect("trabajadores:detail_worker", pk=pk)
+
+@login_required(login_url="/")
+@csrf_exempt
+def removeElement(request):
+    try:
+        elementos = request.POST.getlist("elementos[]")
+        for elemento in elementos:
+            e = TrabajadorBeneficio.objects.get(id=elemento)
+            e.elemento.estado = False
+            e.elemento.save()
+            e.delete()
+    except:
+        return redirect("beneficios:index")
+    return JsonResponse({"resultado":"eliminados correctamente"})

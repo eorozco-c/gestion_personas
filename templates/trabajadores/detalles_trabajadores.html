@@ -6,11 +6,18 @@
     <a href="/{{appname}}" class="mb-3 btn btn-custom text-light border border-custom"><i
             class="far fa-arrow-alt-circle-left"></i> Volver atrás </a>
 </div>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible" role="alert">{{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
 <div class="mb-3 mt-3 container col-12">
     <div class="row">
         <div class="col-xl-6 col-md-6 mb-4">
             <div class="mb-3 border border-custom p-3 rounded-3">
-                <h2>{{object.nombre}} {{object.apellido}}</h2>
+                <h1 class="mb-3">{{object.nombre}} {{object.apellido}}</h1>
                 <p>Correo: {{object.email}}</p>
                 <p>Rut {{object.rut}}</p>
                 <p>Fecha de nacimiento: {{object.fecha_nacimiento}}</p>
@@ -23,16 +30,139 @@
                 {% endif %}
                 <p>Sector: {{object.sector}}</p>
                 <hr>
-                <h2>Documentos</h2>
+                <h1>Documentos</h1>
+                <form method="post" enctype="multipart/form-data"
+                    action="{% url 'trabajadores:cargaDoc' pk=object.id %}" class="mb-3">
+                    {% csrf_token %}
+                    <legend>Cargar documentos</legend>
+                    <div class="mb-3">
+                        <label for="tipo_documento" class="requiredField">
+                            Tipo Documento<span class="asteriskField">*</span> </label>
+                        <select name="tipo_documentos" class="select form-control" required="" id="tipo_documento">
+                            <option value="" selected="" disabled>---------</option>
+                            {% for tipo_documento in tipo_documentos  %}
+                            <option value="{{tipo_documento.id}}">{{tipo_documento.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="file" class="form-control" name="archivo">
+                        <button type="submit" class="btn btn-custom text-light border border-custom">Upload</button>
+                        <i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="right"
+                            title="Solo archivos con extensión PDF"></i>
+                    </div>
+                </form>
+                <form method="post" enctype="multipart/form-data"
+                    action="{% url 'trabajadores:descargaDoc' pk=object.id %}" class="mb-3">
+                    {% csrf_token %}
+                    <legend>Descargar documentos</legend>
+                    <div class="mb-3">
+                        <label for="documento" class="requiredField">
+                            Documento<span class="asteriskField">*</span> </label>
+                        <div class="input-group">
+                            <select name="documentos" class="select form-control" required="" id="documento">
+                                <option value="" selected="" disabled>---------</option>
+                                {% for documento in documentos  %}
+                                <option value="{{documento.documento}}">{{documento.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit"
+                                class="btn btn-custom text-light border border-custom">Descargar</button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
         <div class="col-xl-6 col-md-6 mb-4">
             <div class="mb-3 border border-custom p-3 rounded-3">
-                <h2>Beneficios</h2>
-
+                <h1>Beneficios</h1>
+                <div class="mb-1">
+                    <label for="elementos">Activos:</label>
+                    <select id="elementos" name="elementos" class="form-select" multiple
+                        aria-label="multiple select example">
+                        {% for tb in trabajador_beneficios  %}
+                        <option value="{{tb.id}}">{{tb.beneficio.nombre}}: {{tb.elemento.nombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <a action="{% url 'trabajadores:remove_element' %}" id="remover_elemento"
+                        pk-trabajador={{object.id}}
+                        class="btn btn-custom mb-1 mt-3 text-light border border-custom">Remover
+                    </a>
+                </div>
+                <hr>
+                <div id="beneficiosElementos" class="mb-1">
+                    <form method="post" enctype="multipart/form-data"
+                        action="{% url 'trabajadores:agregarBeneficio' pk=object.id %}" class="mb-3">
+                        <legend>Asignar beneficio</legend>
+                        {% csrf_token %}
+                        <label for="beneficios">Seleccione Beneficio:</label>
+                        <select id="beneficios" name="beneficios" class="form-select mb-1" required>
+                            <option value="" selected="" disabled>---------</option>
+                            {% for beneficio in beneficios  %}
+                            <option value="{{beneficio.id}}">{{beneficio.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="elementosBeneficio">Seleccione Elemento:</label>
+                        <select id="elementosBeneficio" name="elementosBeneficio" class="form-select mb-3" required>
+                            <option value="" selected="" disabled>---------</option>
+                        </select>
+                        <button type="submit" class="btn btn-custom text-light border border-custom">Agregar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 {% endblock content %}
+{% block javascript %}
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+    $("#beneficios").click(function (event) {
+        pk_beneficio = $("#beneficios").val()
+        if (!pk_beneficio) {
+            return
+        }
+        $("#elementosBeneficio").find('option').remove().end()
+        $.ajax({
+            type: "GET",
+            url: "/trabajadores/obtieneElementos/" + pk_beneficio,
+            dataType: "json",
+            success: function (data) {
+                var sel = $('#elementosBeneficio');
+                if (data.data.length == 0) {
+                    sel.append($("<option>").attr('value', "").text(
+                        "----Sin elementos disponibles----"));
+                }
+                $(data.data).each(function () {
+                    sel.append($("<option>").attr('value', this.id).text(this.nombre));
+                });
+            },
+        });
+    })
+
+    $("#remover_elemento").click(function (event) {
+        $(".alert-danger").remove();
+        elementos = $('#elementos').val()
+        pk_trabajador = $(this).attr("pk-trabajador")
+        $.ajax({
+            type: "POST",
+            url: $(this).attr("action"),
+            data: {
+                "elementos": elementos,
+            },
+            dataType: "json",
+            success: function (data) {
+                window.location.reload()
+            },
+        });
+    });
+</script>
+{% endblock javascript %}

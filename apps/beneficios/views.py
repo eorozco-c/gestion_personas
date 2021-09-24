@@ -1,4 +1,4 @@
-from apps.trabajadores.models import Trabajador, TrabajadorBeneficio
+from apps.trabajadores.models import TrabajadorBeneficio
 from apps.documentos.models import DocumentoBeneficio, TipoDocumento
 from django.db.models import Count
 from django.views.generic.edit import CreateView, UpdateView
@@ -150,6 +150,9 @@ def destroy(request,pk):
         if request.user.empresa != beneficio.empresa:
             return redirect("master:index")
         beneficio.delete()
+        ruta = str(f"media/beneficios/{pk}")
+        if os.path.exists(ruta):
+            shutil.rmtree(ruta)
     return redirect("beneficios:index")
 
 @login_required(login_url="/")

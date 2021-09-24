@@ -8,51 +8,54 @@
 {% endblock content %}
 {% block javascript %}
 <script>
-    // === include 'setup' then 'config' above ===
-    const labels = [
-        'Sitio 1',
-        'Sitio 2',
-        'Sitio 3',
-        'Sitio 4',
-        'Sitio 5',
-        'Sitio 6',
-    ];
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'Trabajadores X Sector',
-            data: [65, 59, 80, 81, 56, 55, 40],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 159, 64, 0.2)',
+    $.ajax({
+        type: "GET",
+        url: "/estadisticas/trabajadores-sector",
+        dataType: "json",
+        success: function (queryset) {
 
-            ],
-            borderColor: [
-                'rgb(255, 99, 132)',
-                'rgb(255, 159, 64)',
+            console.log(queryset)
+            const labels = queryset.labels;
 
-            ],
-            borderWidth: 1
-        }]
-    };
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Trabajadores X Sector',
+                    data: queryset.data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
 
-    const config = {
-        type: 'bar',
-        data: data,
-        options: {
-            layout: {
-                padding: 20
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        },
-    };
-    var myChart = new Chart(
-        document.getElementById('myChart'),
-        config
-    );
+                    ],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 159, 64)',
+
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    layout: {
+                        padding: 20
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    responsive: true,
+                },
+            };
+            var myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+            );
+        }
+    });
 </script>
 {% endblock javascript %}

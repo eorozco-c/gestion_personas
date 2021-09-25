@@ -1,16 +1,16 @@
-from apps.trabajadores.models import Sector, Trabajador
+from apps.trabajadores.models import Trabajador
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.db.models import Count, Sum
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 @login_required(login_url="/")
-def index(request):
+def trabajadoresSector(request):
     return render(request,"estadisticas/trabajadores-sitios.html")
 
 @login_required(login_url="/")
-def trabajadoresSector(request):
+def populateTrabajadoresSector(request):
     if request.method == "GET":
         labels = []
         data = []

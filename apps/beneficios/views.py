@@ -51,6 +51,7 @@ class CreateBeneficio(CreateView):
         kwargs.update({'user': self.request.user})
         return kwargs
 
+@method_decorator(login_required, name='dispatch')
 class DetalleBeneficio(DetailView):
     template_name = "beneficios/detalles_beneficios.html"
     model = Beneficio

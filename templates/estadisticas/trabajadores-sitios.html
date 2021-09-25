@@ -10,7 +10,7 @@
 <script>
     $.ajax({
         type: "GET",
-        url: "/estadisticas/trabajadores-sector",
+        url: "/estadisticas/populate-trabajadores-sector",
         dataType: "json",
         success: function (queryset) {
 
@@ -23,8 +23,8 @@
                     label: 'Trabajadores X Sector',
                     data: queryset.data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(149, 17, 49, 0.6)',
+                        'rgba(255,255,78,0.8)',
 
                     ],
                     borderColor: [
@@ -48,7 +48,6 @@
                             beginAtZero: true
                         }
                     },
-                    responsive: true,
                 },
             };
             var myChart = new Chart(

@@ -4,6 +4,6 @@ from . import views
 app_name = "estadisticas"
 
 urlpatterns = [
-    path('', views.index, name="index"),
-    path('trabajadores-sector', views.trabajadoresSector, name="trabajadoresSector"),
+    path('trabajadores-sector', views.trabajadoresSector, name="index"),
+    path('populate-trabajadores-sector', views.populateTrabajadoresSector, name="populateTrabajadoresSector"),
 ]

@@ -9,8 +9,11 @@
             href="{% url 'beneficios:index' %}">Beneficios</a>
     </li>
     <li class="nav-item">
-        <a id="nav-beneficios" class="nav-link color-text-custom border border-danger"
-            href="{% url 'estadisticas:index' %}">Estadisticas</a>
+        <a class="nav-link dropdown-toggle color-text-custom border border-danger" data-bs-toggle="dropdown" href="#"
+            role="button" aria-expanded="false">Estadisticas</a>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="{% url 'estadisticas:index' %}">Trabajadores por Sector</a></li>
+        </ul>
     </li>
     <li class="nav-item">
         <a class="nav-link dropdown-toggle color-text-custom border border-danger" data-bs-toggle="dropdown" href="#"
@@ -25,6 +28,7 @@
             </li>
             {% if user.is_superuser %}
             <li><a class="dropdown-item" href="{% url 'usuarios:register' %}">Crear Usuarios</a></li>
+            <li><a class="dropdown-item" href="{% url 'empresas:index' %}">Gestionar Empresas</a></li>
             {% endif %}
         </ul>
     </li>

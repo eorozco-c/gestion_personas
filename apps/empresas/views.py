@@ -72,7 +72,11 @@ def destroy(request,pk):
             empresa = Empresa.objects.get(id=pk)
         except:
             return redirect("empresas:index")
-        empresa.delete()
+        try:
+            empresa.delete()
+        except:
+            messages.success(request,f'No se puede eliminar empresa ya que tiene elementos asignados',extra_tags='danger')
+            return redirect("empresas:index")
         ruta = str(f"media/empresas/{pk}")
         if os.path.exists(ruta):
             shutil.rmtree(ruta)

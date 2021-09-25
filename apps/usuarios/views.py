@@ -13,14 +13,13 @@ from django.contrib.auth import login
 def index(request):
     if request.method == "GET":
         if Empresa.objects.count() == 0:
-            return redirect("empresas:index")
+            return redirect("empresas:crear")
         if Usuario.objects.count() == 0:
             return redirect("usuarios:register")
         if request.user.is_authenticated:
             return redirect("master:menu")
     return redirect("login")
 
-@method_decorator(login_required, name='dispatch')
 class Register(CreateView):
     template_name = "formularios/generico.html"
     form_class = FormularioRegistro

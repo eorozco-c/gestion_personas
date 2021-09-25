@@ -18,12 +18,10 @@ class ListEmpresas(ListView):
     model = Empresa
     template_name = "empresas/empresas.html"
 
-
-@method_decorator(login_required, name='dispatch')
 class CrearEmpresa(CreateView):
     template_name = "formularios/generico.html"
     form_class = FormularioEmpresa
-    success_url = reverse_lazy("empresas:index")
+    success_url = reverse_lazy("master:index")
 
     def get_context_data(self, **kwargs):
         context = super(CrearEmpresa, self).get_context_data(**kwargs)

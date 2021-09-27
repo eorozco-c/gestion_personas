@@ -12,7 +12,7 @@ class FormularioRegistro(forms.ModelForm):
         OPCIONES_GENERO = [('1','Mujer'),('2','Hombre'),('3','Otro')]
         model = Usuario
         # fields = "__all__"
-        fields = ["first_name", "last_name","rut","fecha_nacimiento","genero","perfil","is_superuser", "is_staff","email","password","confirmarPassword","empresa"]
+        fields = ["first_name", "last_name","rut","fecha_nacimiento","genero","is_superuser", "is_staff","email","password","confirmarPassword","empresa"]
 
         widgets = {
             "fecha_nacimiento" : forms.DateInput(

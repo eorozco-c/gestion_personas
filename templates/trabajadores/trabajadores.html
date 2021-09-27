@@ -24,8 +24,10 @@
         <form method="post" enctype="multipart/form-data" action="{% url 'trabajadores:import' %}">
             {% csrf_token %}
             <div class="input-group">
-                <input type="file" class="form-control" name="myfile">
+                <input type="file" accept=".csv" class="form-control" name="myfile">
                 <button type="submit" class="btn btn-custom text-light border border-custom">Upload</button>
+                <small id="" class="ms-1 form-text text-muted"> Solo archivos con extension .csv seperados por
+                    coma</small>
             </div>
         </form>
     </div>

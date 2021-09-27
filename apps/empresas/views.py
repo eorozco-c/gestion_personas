@@ -18,6 +18,11 @@ class ListEmpresas(ListView):
     model = Empresa
     template_name = "empresas/empresas.html"
 
+    def get(self, *args, **kwargs):
+        if self.request.user.is_superuser or Empresa.objects.count() == 0:
+            return super().get(*args, **kwargs)
+        return redirect("master:index")
+
 class CrearEmpresa(CreateView):
     template_name = "formularios/generico.html"
     form_class = FormularioEmpresa
@@ -48,6 +53,11 @@ class EditEmpresa(UpdateView):
         context['legend'] = "Editar Empresa"
         context['appname'] = "empresas"
         return context
+        
+    def get(self, *args, **kwargs):
+        if self.request.user.is_superuser or Empresa.objects.count() == 0:
+            return super().get(*args, **kwargs)
+        return redirect("master:index")
 
 @login_required(login_url="/")
 def predestroy(request, pk):

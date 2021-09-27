@@ -40,11 +40,10 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <input type="file" class="form-control" name="archivo">
+                        <input type="file" accept=".pdf" class="form-control" name="archivo">
                         <button type="submit" class="btn btn-custom text-light border border-custom">Upload</button>
-                        <i class="fas fa-info-circle ms-1" data-bs-toggle="tooltip" data-bs-placement="right"
-                            title="Solo archivos con extensión PDF"></i>
                     </div>
+                    <small id="" class="form-text text-muted">Solo archivos con extension .pdf</small>
                 </form>
                 <form method="post" enctype="multipart/form-data"
                     action="{% url 'beneficios:descargaDoc' pk=object.id %}" class="mb-3">
